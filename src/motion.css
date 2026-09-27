@@ -1,0 +1,150 @@
+:root {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --travel: 640ms;
+  --fade: 420ms;
+  --hover: 160ms;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes leave {
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.arrive {
+  animation: rise 520ms var(--ease) both;
+}
+
+.arrive-2 {
+  animation-delay: 80ms;
+}
+
+.arrive-3 {
+  animation-delay: 150ms;
+}
+
+.zone {
+  height: min(68vh, 520px);
+  min-height: 360px;
+  padding: 48px 32px;
+  transition:
+    height var(--travel) var(--ease),
+    min-height var(--travel) var(--ease),
+    padding var(--travel) var(--ease),
+    border-color var(--fade) var(--ease),
+    background-color var(--fade) var(--ease);
+}
+
+.zone.is-slim {
+  height: 76px;
+  min-height: 76px;
+  padding: 0 22px;
+}
+
+.zone-large,
+.zone-slim,
+.drop-hint span,
+.lede {
+  transition:
+    opacity var(--fade) var(--ease),
+    max-height var(--travel) var(--ease),
+    margin var(--travel) var(--ease);
+}
+
+.hairline {
+  transition: transform 480ms var(--ease);
+}
+
+.hint-wave path {
+  stroke-dasharray: 180;
+  stroke-dashoffset: 180;
+  animation: draw 900ms var(--ease) 280ms forwards;
+}
+
+.listen-copy {
+  animation: rise 420ms var(--ease) both;
+}
+
+.report.is-in .rise {
+  animation: rise 440ms var(--ease) both;
+}
+
+.report.is-in .wave-path.is-drawn,
+.report.is-in .spectrum-line.is-drawn,
+.report.is-in .contour-path.is-drawn {
+  animation: draw 900ms var(--ease) forwards;
+}
+
+.report.is-in .tick {
+  animation: fade 320ms var(--ease) both;
+}
+
+.pip,
+.tick-label {
+  transition:
+    transform 700ms var(--ease),
+    opacity var(--hover) var(--ease),
+    background-color var(--fade) var(--ease);
+}
+
+.report.is-in .pip {
+  transform: translate(calc(-50% + var(--pos) * 100cqi), -50%);
+}
+
+.report.is-leaving {
+  animation: leave 320ms var(--ease) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .wave-path,
+  .spectrum-line,
+  .contour-path,
+  .hint-wave path {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .tick,
+  .rise,
+  .arrive {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .report.is-in .pip {
+    transform: translate(calc(-50% + var(--pos) * 100cqi), -50%) !important;
+  }
+}

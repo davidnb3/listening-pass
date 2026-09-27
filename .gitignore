@@ -1,0 +1,9 @@
+node_modules
+dist
+.DS_Store
+*.local
+.vite
+tsconfig.app.tsbuildinfo
+tsconfig.node.tsbuildinfo
+dev-dist
+public/fixtures
