@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import type { DeltaMap } from '../analysis/compare'
+import { visibleFigures } from '../analysis/rules'
 import type { BandId, Report as ListeningReport } from '../analysis/types'
 import { Delta } from './Delta'
 import type { Player as PlayerApi } from '../hooks/usePlayer'
 import { BandBalance } from './BandBalance'
 import { Contour, levelWindow } from './Contour'
 import { Notes } from './Notes'
+import { Standout } from './Standout'
 import { Spectrum } from './Spectrum'
 import { Timeline } from './Timeline'
 import { Width } from './Width'
@@ -38,11 +40,9 @@ export function Report({ report, visible, leaving, onLeft, player, deltas = null
         onLeft()
       }}
     >
-      <p className="opening rise" data-align="opening" style={{ animationDelay: '40ms' }}>
-        {report.opening}
-      </p>
+      <Standout report={report} />
       <dl className="figures">
-        {report.figures.map((figure, index) => {
+        {visibleFigures(report).map((figure, index) => {
           const delta = deltas?.[figure.label]
           return (
             <div key={figure.label} className="rise" style={{ animationDelay: `${120 + index * 50}ms` }}>

@@ -11,6 +11,7 @@ export type Comparison = {
   integratedLu: number
   rangeLu: number
   truePeakDb: number
+  samplePeakDb: number
   correlation: number
   bands: BandDelta[]
 }
@@ -29,6 +30,7 @@ export function deltaMap(comparison: Comparison, sign: 1 | -1): DeltaMap {
     Integrated: { value: sign * comparison.integratedLu, digits: 1 },
     Range: { value: sign * comparison.rangeLu, digits: 1 },
     'Loudness range': { value: sign * comparison.rangeLu, digits: 1 },
+    Peak: { value: sign * comparison.samplePeakDb, digits: 1 },
     'True peak': { value: sign * comparison.truePeakDb, digits: 1 },
     Correlation: { value: sign * comparison.correlation, digits: 2 },
   }
@@ -45,6 +47,7 @@ export function compareMetrics(current: Metrics, other: Metrics, name: string): 
     integratedLu: current.integratedLufs - other.integratedLufs,
     rangeLu: current.loudnessRange - other.loudnessRange,
     truePeakDb: current.truePeakDbtp - other.truePeakDbtp,
+    samplePeakDb: current.samplePeakDbfs - other.samplePeakDbfs,
     correlation: current.correlation - other.correlation,
     bands: current.bands.map((band) => {
       const match = other.bands.find((item) => item.id === band.id)

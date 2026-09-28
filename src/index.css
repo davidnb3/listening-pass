@@ -308,13 +308,79 @@ label {
   opacity: 0;
 }
 
-.opening {
-  max-width: 36rem;
+.standout {
+  max-width: 38rem;
   margin: 0;
-  font-size: 1.55rem;
-  font-weight: 400;
+}
+
+.standout-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 28px;
+}
+
+.standout-kicker {
+  margin: 0;
+  color: var(--color-mute);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.standout-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.standout-nav button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--color-quiet);
+  background: transparent;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.standout-nav button:hover,
+.standout-nav button:focus-visible {
+  color: var(--color-ink);
+  border-color: var(--color-mute);
+}
+
+.standout-count {
+  color: var(--color-mute);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+}
+
+.standout-copy {
+  min-height: 5.6rem;
+  animation: fade 280ms var(--ease, ease);
+}
+
+.standout-title {
+  max-width: 36rem;
+  margin: 10px 0 0;
+  font-size: 1.28rem;
   line-height: 1.35;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
+}
+
+.standout-detail {
+  max-width: 38rem;
+  margin: 8px 0 0;
+  color: var(--color-quiet);
+  font-size: 0.95rem;
+  line-height: 1.45;
 }
 
 .figures {
@@ -760,6 +826,128 @@ label {
   color: var(--color-ink);
 }
 
+.help-button {
+  position: fixed;
+  z-index: 6;
+  right: 18px;
+  bottom: 18px;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  padding: 0;
+  color: var(--color-quiet);
+  font-size: 18px;
+  line-height: 1;
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgb(28 28 28 / 6%);
+  cursor: pointer;
+}
+
+.has-player .help-button {
+  bottom: 84px;
+}
+
+.help-button:hover,
+.help-button:focus-visible {
+  color: var(--color-ink);
+  border-color: var(--color-mute);
+}
+
+.help-backdrop {
+  position: fixed;
+  z-index: 5;
+  inset: 0;
+}
+
+.help-panel {
+  position: fixed;
+  z-index: 6;
+  right: 18px;
+  bottom: 70px;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, calc(100% - 36px));
+  max-height: min(70vh, 640px);
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgb(28 28 28 / 8%);
+}
+
+.has-player .help-panel {
+  bottom: 136px;
+}
+
+.help-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 18px 0;
+}
+
+.help-head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.help-close {
+  padding: 0;
+  color: var(--color-mute);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.help-close:hover,
+.help-close:focus-visible {
+  color: var(--color-ink);
+}
+
+.help-body {
+  padding: 14px 18px 20px;
+  overflow: auto;
+  color: var(--color-quiet);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.help-body p {
+  margin: 0 0 12px;
+}
+
+.help-body h3 {
+  margin: 18px 0 8px;
+  color: var(--color-mute);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.help-body ul {
+  margin: 0;
+  padding: 0 0 0 1.1rem;
+}
+
+.help-body li {
+  margin: 0 0 8px;
+}
+
+.help-body strong {
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
 .bands,
 .widths {
   margin-top: 26px;
@@ -1007,7 +1195,7 @@ label {
   display: contents;
 }
 
-.stage.is-compared .opening {
+.stage.is-compared .standout {
   margin-top: 54px;
 }
 
@@ -1233,7 +1421,7 @@ label {
     display: block;
   }
 
-  .stage.is-compared .opening {
+  .stage.is-compared .standout {
     margin-top: 0;
   }
 
@@ -1252,8 +1440,8 @@ label {
   }
 
   .mast h1,
-  .opening {
-    font-size: 1.4rem;
+  .standout-title {
+    font-size: 1.15rem;
   }
 
   .zone {

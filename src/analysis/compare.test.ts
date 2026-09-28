@@ -45,11 +45,12 @@ function metrics(patch: Partial<Metrics>): Metrics {
 
 describe('compareMetrics', () => {
   it('subtracts the other file from this pass', () => {
-    const current = metrics({ integratedLufs: -12, loudnessRange: 5, truePeakDbtp: -0.8 })
+    const current = metrics({ integratedLufs: -12, loudnessRange: 5, truePeakDbtp: -0.8, samplePeakDbfs: -1.1 })
     const other = metrics({
       integratedLufs: -14,
       loudnessRange: 7,
       truePeakDbtp: -1.4,
+      samplePeakDbfs: -1.6,
       bands: metrics({}).bands.map((band) => (band.id === 'bass' ? { ...band, deviationDb: -1 } : band)),
     })
     const comparison = compareMetrics(current, other, 'earlier.wav')
@@ -57,6 +58,8 @@ describe('compareMetrics', () => {
     expect(comparison.integratedLu).toBeCloseTo(2)
     expect(comparison.rangeLu).toBeCloseTo(-2)
     expect(comparison.truePeakDb).toBeCloseTo(0.6)
+    expect(comparison.samplePeakDb).toBeCloseTo(0.5)
+    expect(deltaMap(comparison, 1).Peak.value).toBeCloseTo(0.5)
     expect(comparison.correlation).toBeCloseTo(0)
     expect(comparison.bands.find((band) => band.id === 'bass')?.deltaDb).toBeCloseTo(2)
     expect(deltaMap(comparison, 1).Integrated.value).toBeCloseTo(2)

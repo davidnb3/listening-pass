@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildReport } from './rules'
+import { buildReport, visibleFigures } from './rules'
 import type { Metrics } from './types'
 
 function metrics(patch: Partial<Metrics> = {}): Metrics {
@@ -50,6 +50,16 @@ describe('buildReport', () => {
     expect(report.chapters.flatMap((chapter) => chapter.findings).some((item) => item.severity === 'fix')).toBe(false)
   })
 
+  it('does not call a clean master distorted when true peak is near +1', () => {
+    const report = buildReport(metrics({ truePeakDbtp: 1, samplePeakDbfs: -0.1, clippedSamples: 0 }))
+    expect(report.opening).not.toMatch(/distort/i)
+    const ceiling = report.chapters[0]?.findings.find((item) => item.id === 'ceiling')
+    expect(ceiling?.severity).toBe('watch')
+    expect(ceiling?.title).not.toMatch(/distort/i)
+    expect(ceiling?.explanation).toMatch(/does not sound distorted/)
+    expect(ceiling?.tip).toMatch(/sounds clean, leave it/)
+  })
+
   it('treats clipping as something to fix', () => {
     const report = buildReport(metrics({ clippedSamples: 40, truePeakDbtp: 0.4 }))
     expect(report.opening).toMatch(/clipping/i)
@@ -69,6 +79,7 @@ describe('buildReport', () => {
     expect(report.opening).toMatch(/low mids/i)
     const note = report.chapters[1]?.findings.find((item) => item.id === 'band-lowMid')
     expect(note?.severity).toBe('fix')
+    expect(note?.explanation).toMatch(/muddy/)
     expect(note?.tip).toMatch(/200/)
   })
 
@@ -85,7 +96,22 @@ describe('buildReport', () => {
         tempo: { bpm: 96, confidence: 1.2, alternate: 192 },
       }),
     )
-    expect(quiet.figures.map((figure) => figure.label)).toEqual(['Integrated', 'Range', 'True peak', 'Correlation'])
+    expect(quiet.figures.map((figure) => figure.label)).toEqual([
+      'Integrated',
+      'Range',
+      'Peak',
+      'True peak',
+      'Correlation',
+    ])
+    expect(quiet.figures.find((figure) => figure.label === 'Peak')).toMatchObject({ value: '-1.8', unit: 'dBFS' })
+    const older = { ...quiet, figures: quiet.figures.filter((figure) => figure.label !== 'Peak') }
+    expect(visibleFigures(older).map((figure) => figure.label)).toEqual([
+      'Integrated',
+      'Range',
+      'Peak',
+      'True peak',
+      'Correlation',
+    ])
     const strong = buildReport(
       metrics({
         key: { name: 'D', scale: 'minor', strength: 0.82 },
@@ -133,12 +159,13 @@ describe('buildReport', () => {
     const finished = buildReport(metrics({ integratedLufs: -8, loudnessRange: 5, crestDb: 7 }))
     const loudness = finished.chapters[0]?.findings.find((item) => item.id === 'loudness')
     expect(loudness?.severity).toBe('good')
+    expect(loudness?.title).toBe('Loudness is in a finished-master range')
     expect(loudness?.explanation).toMatch(/−9 and −7/)
     expect(`${loudness?.title} ${loudness?.explanation}`).not.toMatch(/too loud|very loud|streaming target/i)
 
     const playback = buildReport(metrics({ integratedLufs: -14, loudnessRange: 8, crestDb: 12 }))
     const quiet = playback.chapters[0]?.findings.find((item) => item.id === 'loudness')
-    expect(quiet?.title).toMatch(/quieter than a finished master/i)
+    expect(quiet?.title).toMatch(/quieter than a finished-master range/i)
     expect(quiet?.explanation).not.toMatch(/leave a master alone|too loud/i)
   })
 
@@ -157,8 +184,8 @@ describe('buildReport', () => {
     )
     const sub = report.chapters[1]?.findings.find((item) => item.id === 'band-sub')
     expect(sub?.severity).toBe('watch')
-    expect(`${sub?.explanation} ${sub?.tip}`).not.toMatch(/turns into mud|wasted headroom/i)
-    expect(sub?.explanation).toMatch(/not muddy/)
+    expect(`${sub?.explanation} ${sub?.tip}`).not.toMatch(/mud|wasted headroom/i)
+    expect(sub?.explanation).toMatch(/missing there\.$/)
     expect(sub?.tip).toMatch(/80 Hz/)
   })
 

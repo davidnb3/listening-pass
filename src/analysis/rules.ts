@@ -1,5 +1,5 @@
 import { formatHz, formatSigned, formatTime, joinTimes } from './format'
-import type { BandReading, Chapter, Fault, Finding, GroupId, Metrics, Report, Severity } from './types'
+import type { BandReading, Chapter, Fault, Figure, Finding, GroupId, Metrics, Report, Severity } from './types'
 
 const strongKey = 0.7
 const strongTempo = 2.5
@@ -54,7 +54,7 @@ function bandNote(band: BandReading, metrics: Metrics): Finding {
     sub: {
       over: [
         'The sub is heavy',
-        'Energy under 60 Hz is louder than a gentle tilt. On bass-led music that is often the record. A laptop speaker cannot play that octave, so the sub is missing there, not muddy. Mud is the low-mid range, higher up.',
+        'Energy under 60 Hz is louder than a gentle tilt. On bass-led music that is often the record. A laptop speaker cannot play that octave, so the sub is missing there.',
         'Leave the sub if it is the bass. Check the note still speaks on a small speaker through the harmonics above about 80 Hz. High-pass only the parts that should not be down there.',
       ],
       under: [
@@ -78,7 +78,7 @@ function bandNote(band: BandReading, metrics: Metrics): Finding {
     lowMid: {
       over: [
         'The low mids are built up',
-        'The range around 200 to 400 Hz is loud. This is the band that reads as mud on smaller speakers, even when it feels warm in the studio.',
+        'The range around 200 to 400 Hz is loud. Too much energy here is what sounds muddy, on smaller speakers especially, even when it still feels warm in the studio.',
         'Sweep a narrow cut between 200 and 400 Hz on the parts that pile up there, usually guitars, piano, or a dense drum bus.',
       ],
       under: [
@@ -173,7 +173,7 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
         'loudness',
         'dynamics',
         'watch',
-        'This is hotter than a typical finished master',
+        'This is hotter than a finished-master range',
         'Above about −6 LUFS, streaming turns the extra level straight back down. If the peaks still move, the loudness itself is not damage.',
         'Leave it if the record wants to be that hot. You will not hear the extra loudness on the big streaming services.',
         levelEvidence,
@@ -185,7 +185,7 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
         'loudness',
         'dynamics',
         'watch',
-        'This is quieter than a finished master usually is',
+        'This is quieter than a finished-master range',
         'Streaming playback sits near −14 LUFS. A file already around that level is not turned down, but most current masters are delivered between −9 and −7, and the platform turns those down. At −14 the record can sound smaller wherever playback is not normalized.',
         'If this should sit with current pop, electronic, or club records, bring it toward −8 LUFS and stop while the peaks still move. If the dynamics are the point, leave the level alone.',
         levelEvidence,
@@ -265,7 +265,7 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
         'Lower the master until nothing touches 0 dBFS. If only one hit clips, turn that hit down rather than the whole song.',
         [
           { label: 'Clipped samples', value: metrics.clippedSamples.toLocaleString('en-US') },
-          { label: 'True peak', value: `${formatSigned(metrics.truePeakDbtp)} dBTP` },
+          ...peakEvidence(metrics),
         ],
       ),
     )
@@ -274,11 +274,11 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
       note(
         'ceiling',
         'dynamics',
-        'fix',
-        'Intersample peaks will distort on playback',
-        'The samples themselves may look clean, but the true peak is essentially at the ceiling. Conversion to AAC or MP3 can push those peaks over.',
-        'Set the limiter ceiling around −1.0 dBTP and export again. Then check the chorus, which is usually where it still kisses the top.',
-        [{ label: 'True peak', value: `${formatSigned(metrics.truePeakDbtp)} dBTP` }],
+        'watch',
+        'True peak sits above full scale',
+        'The stored samples are still clean, which is why this often does not sound distorted. The waveform between them rises above 0 dBTP, and a later MP3 or AAC encode can clip that overshoot. On a loud commercial master, a reading around +1 dBTP is common.',
+        'If you are exporting, set the limiter ceiling near −1 dBTP. If this file is already finished and it sounds clean, leave it.',
+        peakEvidence(metrics),
       ),
     )
   } else if (metrics.truePeakDbtp > -1) {
@@ -290,7 +290,7 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
         'True peak is close to the ceiling',
         'There is less than 1 dB of true-peak headroom. That is tight for a file that will be encoded again by a streaming service.',
         'Give the limiter another half decibel of ceiling. The loudness change is small. The extra safety is not.',
-        [{ label: 'True peak', value: `${formatSigned(metrics.truePeakDbtp)} dBTP` }],
+        peakEvidence(metrics),
       ),
     )
   } else {
@@ -302,7 +302,7 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
         'True peak has headroom',
         'The intersample peak sits at or under −1 dBTP, which is the usual margin before a stream encodes the file.',
         'Keep the limiter ceiling there on the next export. It is easier to hold than to win back after a file has already clipped.',
-        [{ label: 'True peak', value: `${formatSigned(metrics.truePeakDbtp)} dBTP` }],
+        peakEvidence(metrics),
       ),
     )
   }
@@ -651,9 +651,6 @@ function openingLine(metrics: Metrics): string {
   if (metrics.clippedSamples >= 3) {
     return 'This mix is clipping. The loudest peaks are already flattened in the file.'
   }
-  if (metrics.truePeakDbtp > -0.5) {
-    return 'The true peak is on the ceiling. Encoding this file will distort the loudest moments.'
-  }
   if (!metrics.mono && metrics.correlation < 0.15) {
     return 'Parts of this mix are out of phase, so it will thin out when it is played in mono.'
   }
@@ -680,7 +677,7 @@ function openingLine(metrics: Metrics): string {
     return 'The image is nearly mono, so the elements are sharing one small space.'
   }
   if (metrics.integratedLufs < -16) {
-    return 'This is quieter than a finished master usually is. Where playback is normalized, the noise floor comes up with it.'
+    return 'This is quieter than a finished-master range. Where playback is normalized, the noise floor comes up with it.'
   }
   return 'This sits comfortably. Loudness, tone, and the stereo image are close to a balanced modern mix.'
 }
@@ -696,7 +693,7 @@ function dynamicsVerdict(findings: Finding[]): string {
   if (ceiling?.severity === 'fix') return sentence(ceiling.title)
   if (level && level.severity !== 'good') return sentence(level.title)
   if (movement?.severity === 'watch') return 'The level is controlled, and the dynamics have been flattened.'
-  if (ceiling?.severity === 'watch') return 'The level is in range, and the true peak is a little close.'
+  if (ceiling?.severity === 'watch') return sentence(ceiling.title)
   if (level?.severity === 'good' && movement?.severity === 'good') {
     return 'Level, movement, and headroom are all in a workable range.'
   }
@@ -763,10 +760,32 @@ function silenceReport(metrics: Metrics): Report {
   }
 }
 
+function peakEvidence(metrics: Metrics): { label: string; value: string }[] {
+  return [
+    { label: 'Peak', value: `${formatSigned(metrics.samplePeakDbfs)} dBFS` },
+    { label: 'True peak', value: `${formatSigned(metrics.truePeakDbtp)} dBTP` },
+  ]
+}
+
+function peakFigure(metrics: Metrics): Figure {
+  return { label: 'Peak', value: formatSigned(metrics.samplePeakDbfs), unit: 'dBFS' }
+}
+
+/** Older saved reports measured the sample peak and never printed it. */
+export function visibleFigures(report: Report): Figure[] {
+  if (report.figures.some((figure) => figure.label === 'Peak')) return report.figures
+  if (!Number.isFinite(report.metrics.samplePeakDbfs)) return report.figures
+  const peak = peakFigure(report.metrics)
+  const index = report.figures.findIndex((figure) => figure.label === 'True peak')
+  if (index < 0) return [...report.figures, peak]
+  return [...report.figures.slice(0, index), peak, ...report.figures.slice(index)]
+}
+
 function figuresFor(metrics: Metrics): Report['figures'] {
   const figures: Report['figures'] = [
     { label: 'Integrated', value: formatSigned(metrics.integratedLufs), unit: 'LUFS' },
     { label: 'Range', value: formatSigned(metrics.loudnessRange), unit: 'LU' },
+    peakFigure(metrics),
     { label: 'True peak', value: formatSigned(metrics.truePeakDbtp), unit: 'dBTP' },
     { label: 'Correlation', value: formatSigned(metrics.correlation, 2), unit: '' },
   ]

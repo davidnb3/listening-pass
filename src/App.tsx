@@ -3,6 +3,7 @@ import { compareMetrics, deltaMap } from './analysis/compare'
 import { analyzeFile, isAbort } from './analysis/engine'
 import type { Report as ListeningReport } from './analysis/types'
 import { Dropzone } from './components/Dropzone'
+import { Help } from './components/Help'
 import { HistoryList } from './components/HistoryList'
 import { Mark } from './components/Mark'
 import { Player } from './components/Player'
@@ -422,6 +423,7 @@ export default function App() {
         ) : null}
       </div>
       {showPlayer ? <Player player={player} name={track?.name ?? 'the mix'} /> : null}
+      <Help />
     </main>
   )
 }
