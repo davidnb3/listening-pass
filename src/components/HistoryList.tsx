@@ -44,35 +44,37 @@ export function HistoryList({ menuId, passes, activeId, onOpen, onClear }: Histo
         ) : null}
       </div>
       <div className="passes-panel" id={menuId}>
-        <ol inert={open ? undefined : true}>
-          {passes.map((pass) => {
-            const current = pass.id === activeId
-            return (
-              <li key={pass.id}>
-                <button
-                  className={`pass-open${current ? ' is-current' : ''}`}
-                  type="button"
-                  aria-current={current ? 'true' : undefined}
-                  onClick={() => {
-                    onOpen(pass)
-                    setOpen(false)
-                  }}
-                >
-                  <span className="pass-name">{pass.name}</span>
-                  <span className="pass-date">{formatPassDate(pass.at)}</span>
-                  <span className="pass-figures">
-                    {fourFigures(pass.report.figures).map((figure) => (
-                      <span key={figure.label}>
-                        {figure.value}
-                        {figure.unit ? ` ${figure.unit}` : ''}
-                      </span>
-                    ))}
-                  </span>
-                </button>
-              </li>
-            )
-          })}
-        </ol>
+        <div className="passes-clip">
+          <ol inert={open ? undefined : true}>
+            {passes.map((pass) => {
+              const current = pass.id === activeId
+              return (
+                <li key={pass.id}>
+                  <button
+                    className={`pass-open${current ? ' is-current' : ''}`}
+                    type="button"
+                    aria-current={current ? 'true' : undefined}
+                    onClick={() => {
+                      onOpen(pass)
+                      setOpen(false)
+                    }}
+                  >
+                    <span className="pass-name">{pass.name}</span>
+                    <span className="pass-date">{formatPassDate(pass.at)}</span>
+                    <span className="pass-figures">
+                      {fourFigures(pass.report.figures).map((figure) => (
+                        <span key={figure.label}>
+                          {figure.value}
+                          {figure.unit ? ` ${figure.unit}` : ''}
+                        </span>
+                      ))}
+                    </span>
+                  </button>
+                </li>
+              )
+            })}
+          </ol>
+        </div>
       </div>
     </section>
   )

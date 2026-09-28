@@ -41,7 +41,7 @@ export function Report({ report, visible, leaving, onLeft, player, deltas = null
       }}
     >
       <Standout report={report} />
-      <dl className="figures">
+      <dl className="figures" data-sync="figures">
         {visibleFigures(report).map((figure, index) => {
           const delta = deltas?.[figure.label]
           return (
@@ -57,7 +57,7 @@ export function Report({ report, visible, leaving, onLeft, player, deltas = null
         })}
       </dl>
       {report.chapters.map((chapter, index) => (
-        <section key={chapter.id} className="chapter">
+        <section key={chapter.id} className="chapter" data-sync={chapter.id}>
           <h2 className="rise" style={{ animationDelay: `${360 + index * 80}ms` }}>
             {chapter.label}
           </h2>

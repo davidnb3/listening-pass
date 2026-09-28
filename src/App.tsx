@@ -10,6 +10,7 @@ import { Player } from './components/Player'
 import { Report } from './components/Report'
 import { loadPasses, remember, storePasses, type PassRecord } from './history'
 import { usePairedText } from './hooks/usePairedText'
+import { usePassAlign } from './hooks/usePassAlign'
 import { usePlayer } from './hooks/usePlayer'
 import { useReducedMotion } from './hooks/useReducedMotion'
 
@@ -325,6 +326,7 @@ export default function App() {
   const leftDeltas = comparison ? deltaMap(comparison, 1) : null
   const rightDeltas = comparison ? deltaMap(comparison, -1) : null
   usePairedText(stageRef, compared, compared ? `${activeId ?? ''}:${otherId ?? ''}` : '')
+  usePassAlign(stageRef, compared)
 
   const currentTrack = (
     <>

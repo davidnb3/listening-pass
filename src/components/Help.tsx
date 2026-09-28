@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 
 const always = [
   [
@@ -27,11 +27,20 @@ export function Help() {
   const [open, setOpen] = useState(false)
   const titleId = useId()
   const panelId = useId()
+  const panelRef = useRef<HTMLElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  function close() {
+    setOpen(false)
+    if (panelRef.current?.contains(document.activeElement)) buttonRef.current?.focus()
+  }
 
   useEffect(() => {
     if (!open) return
     function onKey(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false)
+      if (event.key !== 'Escape') return
+      setOpen(false)
+      if (panelRef.current?.contains(document.activeElement)) buttonRef.current?.focus()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -39,16 +48,24 @@ export function Help() {
 
   return (
     <>
-      {open ? <div className="help-backdrop" onClick={() => setOpen(false)} /> : null}
-      {open ? (
-        <section className="help-panel" id={panelId} role="dialog" aria-modal="true" aria-labelledby={titleId}>
-          <div className="help-head">
-            <h2 id={titleId}>What this app does</h2>
-            <button type="button" className="help-close" onClick={() => setOpen(false)} aria-label="Close">
-              Close
-            </button>
-          </div>
-          <div className="help-body">
+      <div className={`help-backdrop${open ? ' is-open' : ''}`} onClick={close} />
+      <section
+        ref={panelRef}
+        className={`help-panel${open ? ' is-open' : ''}`}
+        id={panelId}
+        role="dialog"
+        aria-modal={open || undefined}
+        aria-hidden={!open}
+        aria-labelledby={titleId}
+        inert={!open}
+      >
+        <div className="help-head">
+          <h2 id={titleId}>What this app does</h2>
+          <button type="button" className="help-close" onClick={close} aria-label="Close">
+            Close
+          </button>
+        </div>
+        <div className="help-body">
             <p>
               Listening pass reads a stereo mix and writes a short report. It is a second set of ears for loudness, tone,
               and the stereo image. The file stays on this device.
@@ -86,13 +103,13 @@ export function Help() {
             </p>
           </div>
         </section>
-      ) : null}
       <button
+        ref={buttonRef}
         type="button"
         className="help-button"
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => (open ? close() : setOpen(true))}
       >
         ?
       </button>

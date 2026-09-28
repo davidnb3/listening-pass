@@ -829,8 +829,8 @@ label {
 .help-button {
   position: fixed;
   z-index: 6;
-  right: 18px;
-  bottom: 18px;
+  right: 0;
+  bottom: 0;
   display: grid;
   width: 40px;
   height: 40px;
@@ -846,10 +846,6 @@ label {
   cursor: pointer;
 }
 
-.has-player .help-button {
-  bottom: 84px;
-}
-
 .help-button:hover,
 .help-button:focus-visible {
   color: var(--color-ink);
@@ -860,13 +856,18 @@ label {
   position: fixed;
   z-index: 5;
   inset: 0;
+  pointer-events: none;
+}
+
+.help-backdrop.is-open {
+  pointer-events: auto;
 }
 
 .help-panel {
   position: fixed;
   z-index: 6;
   right: 18px;
-  bottom: 70px;
+  bottom: 52px;
   display: flex;
   flex-direction: column;
   width: min(420px, calc(100% - 36px));
@@ -875,10 +876,31 @@ label {
   border: 1px solid var(--color-line);
   border-radius: 18px;
   box-shadow: 0 18px 40px rgb(28 28 28 / 8%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition:
+    opacity var(--fade) var(--ease, ease),
+    transform var(--travel) var(--ease, ease),
+    visibility 0s linear var(--travel),
+    bottom var(--travel) var(--ease, ease);
+}
+
+.help-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition:
+    opacity var(--fade) var(--ease, ease),
+    transform var(--travel) var(--ease, ease),
+    visibility 0s linear 0s,
+    bottom var(--travel) var(--ease, ease);
 }
 
 .has-player .help-panel {
-  bottom: 136px;
+  bottom: 88px;
 }
 
 .help-head {
@@ -1184,21 +1206,6 @@ label {
   align-items: stretch;
 }
 
-.stage.is-compared > .pair-col {
-  display: grid;
-  grid-template-rows: subgrid;
-  grid-row: span 7;
-  align-items: start;
-}
-
-.stage.is-compared .report {
-  display: contents;
-}
-
-.stage.is-compared .standout {
-  margin-top: 54px;
-}
-
 .pair-next {
   animation: rise 520ms var(--ease, ease) both;
 }
@@ -1218,10 +1225,6 @@ label {
 
 .column-head:empty {
   display: none;
-}
-
-.column-head:has(.passes.is-open) {
-  z-index: 5;
 }
 
 .column-head .passes {
@@ -1273,29 +1276,17 @@ label {
   transform: rotate(180deg);
 }
 
-.passes {
-  position: relative;
-}
-
 .passes-panel {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  left: 0;
-  z-index: 1;
   display: grid;
   grid-template-rows: 0fr;
-  background: var(--color-page);
-  transition: grid-template-rows 420ms var(--ease, ease);
+  transition: grid-template-rows var(--travel) var(--ease, ease);
 }
 
 .passes.is-open .passes-panel {
   grid-template-rows: 1fr;
-  max-height: min(420px, 60vh);
-  overflow: auto;
 }
 
-.passes-panel > ol {
+.passes-clip {
   min-height: 0;
   overflow: hidden;
 }
@@ -1344,12 +1335,8 @@ label {
 
 .passes ol {
   margin: 0;
-  padding: 0;
+  padding: 8px 0 0;
   list-style: none;
-}
-
-.passes.is-open ol {
-  margin-top: 8px;
 }
 
 .passes li {
@@ -1410,19 +1397,6 @@ label {
 
   .stage.is-paired {
     grid-template-columns: 1fr;
-  }
-
-  .stage.is-compared > .pair-col {
-    display: block;
-    grid-row: auto;
-  }
-
-  .stage.is-compared .report {
-    display: block;
-  }
-
-  .stage.is-compared .standout {
-    margin-top: 0;
   }
 
   .player,
