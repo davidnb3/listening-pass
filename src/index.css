@@ -925,6 +925,45 @@ label {
   position: relative;
 }
 
+.contour-plot {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.contour-scale {
+  position: relative;
+  color: var(--color-mute);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.contour-scale span {
+  position: absolute;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.contour-scale span:nth-child(1) {
+  top: 11%;
+}
+
+.contour-scale span:nth-child(2) {
+  top: 46%;
+}
+
+.contour-scale span:nth-child(3) {
+  top: 80%;
+}
+
+.contour-note {
+  max-width: 40rem;
+  margin: 8px 0 0;
+  color: var(--color-quiet);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 .contour-path {
   fill: none;
   stroke: currentColor;

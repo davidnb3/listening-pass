@@ -105,6 +105,8 @@ export function Report({ report, visible, leaving, onLeft, player, deltas = null
               <>
                 <Contour
                   caption="Correlation"
+                  note="Correlation is how alike the left and right channels are. Near +1, they are almost the same signal, so the mix is narrow and stays put in mono. Near 0, they are unrelated, which is a wide stereo image. Near −1, they are opposite and largely disappear when summed to mono."
+                  scale={['+1', '0', '−1']}
                   values={metrics.mono ? [1, 1] : metrics.correlationOverTime}
                   floor={-1}
                   ceiling={1}
