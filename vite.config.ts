@@ -3,7 +3,9 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // Project Pages is served from /listening-pass/, not the domain root.
+  base: command === 'build' ? '/listening-pass/' : '/',
   plugins: [
     react(),
     tailwindcss(),
@@ -42,4 +44,4 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts'],
   },
-})
+}))
