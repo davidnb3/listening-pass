@@ -56,15 +56,6 @@ export function standouts(report: Report): Standout[] {
     })
   }
 
-  const key = report.figures.find((figure) => figure.label === 'Key')
-  if (key) {
-    grouped.note.push({
-      id: 'key',
-      kind: 'note',
-      title: `The key reads as ${key.value} ${key.unit}`,
-      detail: 'Strong enough to trust as a key center. It is not a chord chart.',
-    })
-  }
   const tempo = report.figures.find((figure) => figure.label === 'Tempo')
   if (tempo) {
     const alternate = tempo.unit.split('·')[1]?.trim()

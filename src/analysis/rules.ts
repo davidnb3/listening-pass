@@ -66,61 +66,61 @@ function bandNote(band: BandReading, metrics: Metrics): Finding {
     bass: {
       over: [
         'The bass is pushed',
-        'The octave around the bass is louder than a balanced tilt. That can be a style. It can also hide the kick and thicken everything above it.',
+        'The bass band, from about 60 to 250 Hz, is louder than a balanced tilt. That can be a style. It can also hide the kick and thicken everything above it.',
         'Decide which part owns the low end. A small cut on the other one usually does more than turning the bass down in the master.',
       ],
       under: [
         'The low end is thin',
-        'Bass energy is below the rest of the spectrum, so the chorus can sound small once you leave the monitors you mixed on.',
-        'A gentle shelf on the bass, or a tighter kick, will do more than boosting the master low end.',
+        'Bass energy, from about 60 to 250 Hz, is below the rest of the spectrum, so the track can sound small once you leave the monitors you mixed on.',
+        'Add weight on the bass note or the body of the kick. A wide boost on the master will lift the kick and the bass together.',
       ],
     },
     lowMid: {
       over: [
         'The low mids are built up',
-        'The range around 200 to 400 Hz is loud. Too much energy here is what sounds muddy, on smaller speakers especially, even when it still feels warm in the studio.',
-        'Sweep a narrow cut between 200 and 400 Hz on the parts that pile up there, usually guitars, piano, or a dense drum bus.',
+        'The range from about 250 to 500 Hz is loud. Too much energy here sounds muddy or boxy, on smaller speakers especially, even when it still feels warm in the studio.',
+        'Sweep a narrow cut from about 250 to 500 Hz on the parts that pile up there: often the tail of the bass, a pad, the body of the kick, or a reverb. Leave it if that warmth is the record.',
       ],
       under: [
         'The low mids are scooped',
         'There is a hole between the bass and the mids, so the mix can sound hollow or disconnected.',
-        'Bring back a little body on the parts that should fill the room, rather than adding a wide low-mid boost on the master.',
+        'Bring back a little body on the bass, the kick, or the pad that should fill the room, rather than a wide boost on the master.',
       ],
     },
     mid: {
       over: [
         'The mids are crowded',
-        'The middle of the spectrum is louder than the bands around it. That is where vocals, snare, and guitars already compete.',
-        'Give the lead the mids and tuck the supporting parts with a small cut, or move them slightly off center.',
+        'The middle of the spectrum, from about 500 Hz to 2 kHz, is louder than the bands around it. Leads, claps, chords, and vocals already compete there.',
+        'Give the lead that range and tuck the other parts with a small cut. A pan can separate them in headphones. On a club system the center still carries the tune, so the cut matters more.',
       ],
       under: [
         'The mids are recessed',
-        'The center of the spectrum is quieter than the lows and the top. Vocals and snare can sit behind the track even when they are not actually quiet.',
-        'A small lift on the vocal or the snare is safer than a wide mid boost on the whole mix.',
+        'The center of the spectrum is quieter than the lows and the top. A lead, a clap, or a vocal can sit behind the track even when its fader is not low.',
+        'A small lift on the part that should be in front is safer than a wide mid boost on the whole mix. Leave it if the distance is the point.',
       ],
     },
     presence: {
       over: [
         'The presence range is hot',
-        'Energy from about 2 to 5 kHz is pushed. This is where a mix turns harsh, especially once it is played louder than the mix position.',
-        'Ease 2 to 5 kHz before you add more air. If a vocal is the cause, a dynamic cut there is kinder than a static one.',
+        'Energy from about 2 to 6 kHz is pushed. This is where a mix turns harsh, especially once it is played louder than the mix position.',
+        'Ease that range on the part that jumps out, a lead, hats, or a vocal, before you add more air. A dynamic cut, riding only when it jumps, is kinder than a static cut across the master.',
       ],
       under: [
         'The presence is shy',
-        'The 2 to 5 kHz range is quiet, so the mix can sound dull or distant even when the top octave is open.',
-        'A little presence on the vocal or the snare will bring the mix forward without brightening everything.',
+        'The 2 to 6 kHz range is quiet, so the mix can sound dull or set back even when the top octave is open.',
+        'A little presence on the lead, the clap, or the vocal will bring the mix forward. Leave it if the record is meant to sit back.',
       ],
     },
     air: {
       over: [
         'The top end is very open',
-        'The air band is louder than the tilt. On bright headphones that becomes brittle, and it shows up more at a low listening level.',
-        'A wide, gentle shelf down from 10 kHz is enough. Check it quietly, where brightness is easier to overdo.',
+        'The air band, above about 6 kHz, is louder than the tilt. On bright headphones that becomes brittle. At a quiet listening level this band is harder to hear, so it is easy to have added too much already.',
+        'If the bite is up top, a wide gentle shelf down from about 10 kHz is enough. Check it at the level you will play the record. Quiet monitoring hides this band.',
       ],
       under: [
         'The air band is quiet',
-        'Above 6 kHz the mix falls away, so it will read as dull on earbuds and laptop speakers.',
-        'A small shelf from 10 kHz, or a little excitement on the parts that should shimmer, before you brighten the whole master.',
+        'Above about 6 kHz the mix falls away. That can read as dull on earbuds and laptop speakers, and it can also be a dark ambient or dub record doing what it means to.',
+        'If a hat, a lead, or a vocal should shimmer, add a little on that part in the range that is missing, often 6 to 10 kHz. Leave a dark record dark. Do not brighten the whole master to fix one sound.',
       ],
     },
   }
@@ -143,51 +143,51 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
 
   const level = metrics.integratedLufs
   const crushed = metrics.loudnessRange < 3 && metrics.crestDb < 6
-  if (level <= -6.5 && level >= -9.5) {
+  if (level <= -6 && level >= -10) {
     findings.push(
       note(
         'loudness',
         'dynamics',
         'good',
-        'Loudness is in a finished-master range',
-        'A current master usually sits between −9 and −7 LUFS. Streaming plays back near −14 and turns a louder file down. That reduction is expected. It is not a reason to deliver the master at the playback level.',
-        'Judge the chorus against other records at the same monitoring level. Keep true-peak headroom for the encode. Do not master to the platform number.',
+        'Loudness sits with a lot of club records',
+        'Integrated level is between about −10 and −6 LUFS. House, techno, trance, and bass records often land here. Streaming that normalizes plays back near −14, Apple nearer −16, and turns this down. SoundCloud, Bandcamp, and a club player play this level as it is.',
+        'Judge the loud section against other records at the same monitoring level. Keep about 1 dB of true-peak headroom for the encode. Do not master to the platform number. If this is still a mix, balance the kick and the bass before you limit.',
         levelEvidence,
       ),
     )
-  } else if (level > -6.5 && crushed) {
+  } else if (level > -6 && crushed) {
     findings.push(
       note(
         'loudness',
         'dynamics',
         'watch',
-        'The master is hotter than it needs to be, and the peaks are gone',
-        'Past about −6 LUFS, with almost no movement left, the limiter has become the sound. Streaming will turn the level down and leave the flattening in place.',
-        'Ease the limiter until the integrated level is near −8 LUFS and the chorus can still lift a little. Do not chase −14. That is the playback level, not the master.',
+        'This is very loud, and the level barely moves',
+        'Above about −6 LUFS, with little room left between the peaks and the average. Hard club styles sometimes sit here on purpose. Services that normalize turn the level down and leave the flat peaks in place. A store or a DJ setup that does not normalize will play it this hot.',
+        'Listen to the loudest hits. If they pump, dull, or all land at the same height, ease those hits until the loud section can still breathe. If that density is the sound, leave it. If this is still a mix, fix the parts before the limiter.',
         levelEvidence,
       ),
     )
-  } else if (level > -6.5) {
+  } else if (level > -6) {
     findings.push(
       note(
         'loudness',
         'dynamics',
         'watch',
-        'This is hotter than a finished-master range',
-        'Above about −6 LUFS, streaming turns the extra level straight back down. If the peaks still move, the loudness itself is not damage.',
-        'Leave it if the record wants to be that hot. You will not hear the extra loudness on the big streaming services.',
+        'This is hot, and the peaks still move',
+        'Above about −6 LUFS, and the peaks are not gone. Club and harder styles often want this. Services that normalize will turn the extra level down. SoundCloud, Bandcamp, and a club player will not.',
+        'Leave it if the record wants to be that hot. You will not hear the extra loudness where playback is normalized.',
         levelEvidence,
       ),
     )
-  } else if (level >= -16) {
+  } else if (level >= -18) {
     findings.push(
       note(
         'loudness',
         'dynamics',
-        'watch',
-        'This is quieter than a finished-master range',
-        'Streaming playback sits near −14 LUFS. A file already around that level is not turned down, but most current masters are delivered between −9 and −7, and the platform turns those down. At −14 the record can sound smaller wherever playback is not normalized.',
-        'If this should sit with current pop, electronic, or club records, bring it toward −8 LUFS and stop while the peaks still move. If the dynamics are the point, leave the level alone.',
+        'good',
+        'Loudness sits with quieter records',
+        'Between about −18 and −10 LUFS. Ambient and downtempo often finish here, and it is close to streaming playback: near −14 on Spotify and YouTube, nearer −16 on Apple. Next to a club record, on a DJ setup or a store that plays the file as it is, this will sound smaller.',
+        'Leave it if the space is the point. If it should sit with club records where playback is not normalized, raise the loud section while the peaks still move. Do not aim at one number. If this is still a mix, balance the parts before you limit.',
         levelEvidence,
       ),
     )
@@ -197,9 +197,9 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
         'loudness',
         'dynamics',
         'watch',
-        'This master is quite quiet',
-        'This is well below a finished level, and below what streaming will play it at. Normalization turns the whole file up, including the noise floor.',
-        'If it is meant to be finished, raise it toward −8 LUFS with a limiter that only catches the peaks. Leave it if the open dynamics are the record.',
+        'This is quiet even for ambient',
+        'Below about −18 LUFS. That is under a typical ambient or downtempo master, and under what streaming will play it at. Where playback is normalized, the whole file comes up, noise floor included. Where it is not, the record sounds far smaller than other music.',
+        'If the hush is the record, leave it. If it should be louder, raise it until the peaks just start to meet the limiter, then stop. A quieter genre can live near −16 to −14. A club record has further to go, and should stop while the hits still move. If this is still a mix, balance it before you limit.',
         levelEvidence,
       ),
     )
@@ -222,9 +222,9 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
         'movement',
         'dynamics',
         'watch',
-        'The dynamics are flattened',
-        'Loudness barely moves, and the crest between the true peak and the average level is small. The limiter is doing the musical work.',
-        'Back the limiter and the bus compressor off before you reach for more. Punch returns when the peaks have somewhere to go.',
+        'The level barely moves',
+        'Loudness stays in a narrow range, and the crest between the peaks and the average is small. A steady club loop does that on purpose. So does a limiter or a clipper that has used up the peaks.',
+        'Listen to the loudest hits. If they pump, dull, or all land at the same height, ease the limiter or the clipper on those hits. If the loop is supposed to stay level, leave it. Compression on the whole master will not invent a drop.',
         moveEvidence,
       ),
     )
@@ -236,7 +236,7 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
         'good',
         'The peaks still have room',
         'Loudness moves across the song, and the crest is high enough that attacks are not pinned to the ceiling.',
-        'If a chorus should feel bigger, automate into it. More compression on the whole master would spend the range you still have.',
+        'If a drop or a louder section should feel bigger, ride the level into it. More compression on the whole master would spend the range you still have.',
         moveEvidence,
       ),
     )
@@ -260,9 +260,9 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
         'ceiling',
         'dynamics',
         'fix',
-        'The file is clipping',
-        'Samples are hitting full scale, so those waveform tops are already flat. The distortion is in the file, before any streaming encoder touches it.',
-        'Lower the master until nothing touches 0 dBFS. If only one hit clips, turn that hit down rather than the whole song.',
+        'Some samples are clipped',
+        'Samples hit full scale, so those waveform tops are flat in the file. That can be a clipper you wanted on a drum, or a peak that slipped. The flat top is in the file either way, and a later encode has nothing left above it.',
+        'Listen to those hits. A crackle or a splat is damage: turn that hit down rather than the whole song. A drum that was meant to clip, and still sounds right, can stay.',
         [
           { label: 'Clipped samples', value: metrics.clippedSamples.toLocaleString('en-US') },
           ...peakEvidence(metrics),
@@ -286,10 +286,10 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
       note(
         'ceiling',
         'dynamics',
-        'watch',
-        'True peak is close to the ceiling',
-        'There is less than 1 dB of true-peak headroom. That is tight for a file that will be encoded again by a streaming service.',
-        'Give the limiter another half decibel of ceiling. The loudness change is small. The extra safety is not.',
+        'good',
+        'True peak is inside the last decibel',
+        'The intersample peak sits between −1 and −0.5 dBTP. Finished club records and quieter masters both land here. A later MP3 or AAC encode still likes a little room.',
+        'If you export again, set the limiter ceiling near −1 dBTP. If this file is already finished and it sounds clean, leave it.',
         peakEvidence(metrics),
       ),
     )
@@ -325,8 +325,34 @@ function dynamicsFindings(metrics: Metrics): Finding[] {
     )
   }
 
+  const lift = sectionLiftLu(metrics.loudness)
+  if (lift !== null) {
+    findings.push(
+      note(
+        'lift',
+        'dynamics',
+        'watch',
+        'The loud stretch sits above the quiet stretch',
+        `The louder part of the file is about ${Math.round(lift)} LU above the quieter part. Integrated loudness averages them, so a long intro, breakdown, or fade can make a loud drop look quieter than it is.`,
+        'Judge the loud section on its own, and the quiet section on its own. If you raise the whole file to lift the intro, the drop gets louder too. Leave the shape if it is the arrangement.',
+        [{ label: 'Lift', value: `${Math.round(lift)} LU` }],
+      ),
+    )
+  }
+
   findings.push(...faultNotes(metrics))
   return findings
+}
+
+/** Difference between the quieter and louder stretches of short-term loudness. */
+function sectionLiftLu(loudness: number[]): number | null {
+  const levels = loudness.filter((value) => Number.isFinite(value) && value > -50)
+  if (levels.length < 8) return null
+  const sorted = [...levels].sort((a, b) => a - b)
+  const at = (fraction: number) =>
+    sorted[Math.min(sorted.length - 1, Math.max(0, Math.round((sorted.length - 1) * fraction)))] ?? sorted[0]
+  const lift = (at(0.8) ?? 0) - (at(0.2) ?? 0)
+  return lift >= 5 ? lift : null
 }
 
 function faultNotes(metrics: Metrics): Finding[] {
@@ -356,9 +382,9 @@ function faultNotes(metrics: Metrics): Finding[] {
         'dropouts',
         'dynamics',
         'watch',
-        'There is a digital glitch',
-        'The waveform jumps in a way a performance does not. It is usually an edit, a dropout, or a bad export.',
-        'Listen at those times with the master bypassed. Repair the edit in the session rather than smoothing it on the master.',
+        'The waveform jumps',
+        'The level changes faster than a tone does. That can be a stutter, a tape stop, or a chopped break you wanted. It can also be a bad edit, a dropout, or a broken export.',
+        'Listen at those times with the master bypassed. If it is an accident, repair it in the session. If the glitch is the part, leave it.',
         [{ label: 'Times', value: joinTimes(dropouts.map((fault) => fault.time)) }],
       ),
     )
@@ -456,28 +482,45 @@ function frequencyFindings(metrics: Metrics): Finding[] {
         'frequency',
         'watch',
         'The upper mids are rough as well as loud',
-        'The presence range is pushed, and the partials up there beat against each other. That is the harshness that shows up on earbuds even when the studio monitors still feel fine.',
-        'A dynamic cut around the harsh spot, riding only when it jumps out, keeps the vocal present without sanding off the whole top end.',
+        'The presence range is pushed, and the partials up there beat against each other. That harshness shows up on earbuds even when the monitors still feel fine. On a distorted lead, the roughness can be the sound.',
+        'If a part jumps out and you want it smoother, a dynamic cut around the harsh spot keeps the rest of the top. If the grit is the lead, leave it.',
         [{ label: 'Roughness', value: formatSigned(metrics.dissonance ?? 0, 2) }],
       ),
     )
   }
 
-  for (const peak of metrics.resonances) {
+  if (subRumble(metrics)) {
     findings.push(
       note(
-        `resonance-${Math.round(peak.hz)}`,
+        'rumble',
         'frequency',
-        peak.prominenceDb >= 9 ? 'fix' : 'watch',
-        `A narrow peak sits near ${formatHz(peak.hz)}`,
-        `It stands about ${formatSigned(peak.prominenceDb, 0)} dB above the spectrum around it. A peak that narrow is usually a resonance, not the tone of the song.`,
-        'A cut of two or three decibels, with a narrow Q, is enough. A wide cut will take the body of the mix with it.',
-        [{ label: 'Frequency', value: formatHz(peak.hz) }],
+        'watch',
+        'Energy under 30 Hz is as loud as the sub',
+        'Cycles under about 30 Hz are keeping up with the sub you can hear, from about 40 to 70 Hz. Many club systems only partly play that bottom octave. Small speakers leave it out. It still uses limiter headroom on every hit.',
+        'If that bottom octave is the weight of the record, leave it, and listen for the limiter ducking the kick. If it is only rumble under the note, high-pass around 25 to 30 Hz on that part and keep the pitch of the bass.',
+        [{ label: 'Sub', value: 'under 30 Hz' }],
       ),
     )
   }
 
   return findings
+}
+
+function medianDb(points: { db: number }[]): number {
+  const sorted = [...points].map((point) => point.db).sort((a, b) => a - b)
+  return sorted[Math.floor(sorted.length / 2)] ?? -120
+}
+
+/** Sub-30 Hz competing with the audible sub, and the sub band already loud. */
+function subRumble(metrics: Metrics): boolean {
+  const sub = bandById(metrics, 'sub')
+  if ((sub?.deviationDb ?? 0) < 4) return false
+  const low = metrics.spectrum.filter((point) => point.hz >= 18 && point.hz < 30)
+  const body = metrics.spectrum.filter((point) => point.hz >= 40 && point.hz <= 70)
+  if (low.length === 0 || body.length === 0) return false
+  const lowLevel = medianDb(low)
+  const bodyLevel = medianDb(body)
+  return lowLevel > -15 && lowLevel >= bodyLevel - 1.5
 }
 
 function spaceFindings(metrics: Metrics): Finding[] {
@@ -495,7 +538,7 @@ function spaceFindings(metrics: Metrics): Finding[] {
         'good',
         'This file is mono',
         'There is no difference between the left and the right, so there is no stereo image to judge. What you hear is the whole mix, in one place.',
-        'If the mix was stereo before export, the export folded it. If it was always mono, any width has to be made on purpose, and kept off the bass and the lead.',
+        'If the mix was stereo before export, the export folded it. If it was always mono, any width has to be made on purpose. Keep it off the kick and the bass. The lead can be wide.',
         correlationEvidence,
       ),
     )
@@ -511,15 +554,15 @@ function spaceFindings(metrics: Metrics): Finding[] {
         correlationEvidence,
       ),
     )
-  } else if (metrics.correlation < 0.35 || metrics.width > 0.28) {
+  } else if (metrics.correlation < 0.22 || metrics.width > 0.45) {
     findings.push(
       note(
         'image',
         'space',
         'watch',
-        'The image is very wide',
-        'A lot of the energy lives in the sides. That can feel impressive in headphones and fragile once the mix is summed or played in a room.',
-        'Check a mono fold before you add any more width. Keep the lead and the bass closer to the center than the ear-candy.',
+        'A lot of the mix lives in the sides',
+        'Much of the energy is in the side signal. That feels large in headphones, and it can thin out once the mix is summed or played in a room. A wide lead or a wide pad can be the style.',
+        'Check a mono fold before you add more width. Keep the kick and the bass closer to the center than the effects. The lead is allowed to be wide.',
         correlationEvidence,
       ),
     )
@@ -531,7 +574,7 @@ function spaceFindings(metrics: Metrics): Finding[] {
         'watch',
         'The mix is nearly mono',
         'Left and right are almost the same signal. Everything is sharing one small space in the center.',
-        'If that is not the intent, open the supporting parts with a little pan, room, or a double. Leave the vocal and the bass where they are.',
+        'If that is not the intent, open the supporting parts with a little pan or room. Leave the bass in the center. A wide lead is normal here. Skip a copied double with a short delay: that Haas gap is how the phase falls apart.',
         correlationEvidence,
       ),
     )
@@ -635,7 +678,7 @@ function spaceFindings(metrics: Metrics): Finding[] {
         'watch',
         'Loud parts are stacked in the center',
         `The ${crowded.label.toLowerCase()} band is hot, and almost all of the mix is parked in the middle. Those elements are competing for the same space.`,
-        'Pan or widen the supporting parts, and leave the lead in the center. Then let each part own a slice of that band instead of all of them boosting it.',
+        'Pan or widen the supporting parts. A lead can stay in the center or sit wide. Then let each part own a slice of that band, the bass, the pad, the stab, or the vocal, instead of all of them boosting it.',
         [{ label: crowded.label, value: `${formatSigned(crowded.deviationDb)} dB` }],
       ),
     )
@@ -649,13 +692,13 @@ function openingLine(metrics: Metrics): string {
     return 'This file is essentially silent, so there is no mix here to judge yet.'
   }
   if (metrics.clippedSamples >= 3) {
-    return 'This mix is clipping. The loudest peaks are already flattened in the file.'
+    return 'Some peaks are clipped in the file. Listen before you decide that is damage.'
   }
   if (!metrics.mono && metrics.correlation < 0.15) {
     return 'Parts of this mix are out of phase, so it will thin out when it is played in mono.'
   }
-  if (metrics.integratedLufs > -6.5 && metrics.loudnessRange < 3 && metrics.crestDb < 6) {
-    return 'This master is pushed past a useful loudness, and the peaks have little room left.'
+  if (metrics.integratedLufs > -6 && metrics.loudnessRange < 3 && metrics.crestDb < 6) {
+    return 'This is very loud, and the peaks have little room left. That can be a hard club master, or a limiter with nothing left to do.'
   }
   const worst = strongestBands(metrics)[0]
   if (worst && Math.abs(worst.deviationDb) >= 6) {
@@ -676,8 +719,8 @@ function openingLine(metrics: Metrics): string {
   if (!metrics.mono && metrics.correlation > 0.92 && metrics.width < 0.05) {
     return 'The image is nearly mono, so the elements are sharing one small space.'
   }
-  if (metrics.integratedLufs < -16) {
-    return 'This is quieter than a finished-master range. Where playback is normalized, the noise floor comes up with it.'
+  if (metrics.integratedLufs < -18) {
+    return 'This is quiet even for ambient and downtempo. Where playback is normalized, the noise floor comes up with it.'
   }
   return 'This sits comfortably. Loudness, tone, and the stereo image are close to a balanced modern mix.'
 }
@@ -692,7 +735,7 @@ function dynamicsVerdict(findings: Finding[]): string {
   const movement = findings.find((item) => item.id === 'movement')
   if (ceiling?.severity === 'fix') return sentence(ceiling.title)
   if (level && level.severity !== 'good') return sentence(level.title)
-  if (movement?.severity === 'watch') return 'The level is controlled, and the dynamics have been flattened.'
+  if (movement?.severity === 'watch') return 'The level is controlled, and it barely moves.'
   if (ceiling?.severity === 'watch') return sentence(ceiling.title)
   if (level?.severity === 'good' && movement?.severity === 'good') {
     return 'Level, movement, and headroom are all in a workable range.'
@@ -711,8 +754,6 @@ function frequencyVerdict(findings: Finding[]): string {
     return `${sentence(first.title).replace(/\.$/, '')}, and ${second.title.charAt(0).toLowerCase()}${second.title.slice(1)}.`
   }
   if (first) return sentence(first.title)
-  const resonance = findings.find((item) => item.id.startsWith('resonance'))
-  if (resonance) return sentence(resonance.title)
   return 'The broad tilt is fine. A narrower detail is worth a look.'
 }
 

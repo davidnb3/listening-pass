@@ -62,7 +62,7 @@ describe('buildReport', () => {
 
   it('treats clipping as something to fix', () => {
     const report = buildReport(metrics({ clippedSamples: 40, truePeakDbtp: 0.4 }))
-    expect(report.opening).toMatch(/clipping/i)
+    expect(report.opening).toMatch(/clipped/i)
     const ceiling = report.chapters[0]?.findings.find((item) => item.id === 'ceiling')
     expect(ceiling?.severity).toBe('fix')
     expect(ceiling?.tip.length).toBeGreaterThan(20)
@@ -80,7 +80,8 @@ describe('buildReport', () => {
     const note = report.chapters[1]?.findings.find((item) => item.id === 'band-lowMid')
     expect(note?.severity).toBe('fix')
     expect(note?.explanation).toMatch(/muddy/)
-    expect(note?.tip).toMatch(/200/)
+    expect(note?.tip).toMatch(/250 to 500/)
+    expect(note?.tip).not.toMatch(/guitar|piano/i)
   })
 
   it('warns when the bass is wide and the sides disagree', () => {
@@ -155,18 +156,26 @@ describe('buildReport', () => {
     expect(notes.find((item) => item.id === 'silence-end')?.explanation).toMatch(/4\.2/)
   })
 
-  it('treats −8 LUFS as a finished master and −14 as quieter than that', () => {
-    const finished = buildReport(metrics({ integratedLufs: -8, loudnessRange: 5, crestDb: 7 }))
-    const loudness = finished.chapters[0]?.findings.find((item) => item.id === 'loudness')
+  it('treats club loudness and quieter genres as different finished ranges', () => {
+    const club = buildReport(metrics({ integratedLufs: -8, loudnessRange: 5, crestDb: 7 }))
+    const loudness = club.chapters[0]?.findings.find((item) => item.id === 'loudness')
     expect(loudness?.severity).toBe('good')
-    expect(loudness?.title).toBe('Loudness is in a finished-master range')
-    expect(loudness?.explanation).toMatch(/−9 and −7/)
-    expect(`${loudness?.title} ${loudness?.explanation}`).not.toMatch(/too loud|very loud|streaming target/i)
+    expect(loudness?.title).toBe('Loudness sits with a lot of club records')
+    expect(loudness?.explanation).toMatch(/−10 and −6/)
+    expect(`${loudness?.explanation} ${loudness?.tip}`).not.toMatch(/−8 LUFS/)
 
-    const playback = buildReport(metrics({ integratedLufs: -14, loudnessRange: 8, crestDb: 12 }))
-    const quiet = playback.chapters[0]?.findings.find((item) => item.id === 'loudness')
-    expect(quiet?.title).toMatch(/quieter than a finished-master range/i)
-    expect(quiet?.explanation).not.toMatch(/leave a master alone|too loud/i)
+    const ambient = buildReport(metrics({ integratedLufs: -14, loudnessRange: 8, crestDb: 12 }))
+    const quiet = ambient.chapters[0]?.findings.find((item) => item.id === 'loudness')
+    expect(quiet?.severity).toBe('good')
+    expect(quiet?.title).toMatch(/quieter records/i)
+    expect(`${quiet?.explanation} ${quiet?.tip}`).toMatch(/ambient/i)
+    expect(`${quiet?.explanation} ${quiet?.tip}`).not.toMatch(/−8 LUFS/)
+
+    const hushed = buildReport(metrics({ integratedLufs: -20, loudnessRange: 10, crestDb: 14 }))
+    const hush = hushed.chapters[0]?.findings.find((item) => item.id === 'loudness')
+    expect(hush?.severity).toBe('watch')
+    expect(hush?.title).toMatch(/quiet even for ambient/i)
+    expect(hush?.tip).toMatch(/leave it/i)
   })
 
   it('does not call a heavy sub mud on a laptop', () => {
@@ -187,6 +196,46 @@ describe('buildReport', () => {
     expect(`${sub?.explanation} ${sub?.tip}`).not.toMatch(/mud|wasted headroom/i)
     expect(sub?.explanation).toMatch(/missing there\.$/)
     expect(sub?.tip).toMatch(/80 Hz/)
+  })
+
+  it('does not tell a beginner to notch a narrow peak', () => {
+    const report = buildReport(
+      metrics({ resonances: [{ hz: 110, prominenceDb: 11 }] }),
+    )
+    const notes = report.chapters.flatMap((chapter) => chapter.findings)
+    expect(notes.some((item) => item.id.startsWith('resonance'))).toBe(false)
+    expect(notes.some((item) => /not the tone|narrow Q/i.test(`${item.title} ${item.tip}`))).toBe(false)
+  })
+
+  it('names a loud stretch when the contour actually lifts', () => {
+    const report = buildReport(
+      metrics({ loudness: [-24, -23, -22, -21, -20, -12, -11, -10, -9, -10, -11, -12] }),
+    )
+    const lift = report.chapters[0]?.findings.find((item) => item.id === 'lift')
+    expect(lift?.explanation).toMatch(/intro, breakdown, or fade/)
+    expect(lift?.tip).toMatch(/Leave the shape/)
+  })
+
+  it('mentions sub energy under 30 Hz only when it keeps up with the audible sub', () => {
+    const report = buildReport(
+      metrics({
+        bands: metrics().bands.map((band) => (band.id === 'sub' ? { ...band, deviationDb: 6 } : band)),
+        spectrum: [
+          { hz: 22, db: -4 },
+          { hz: 28, db: -5 },
+          { hz: 48, db: -6 },
+          { hz: 62, db: -7 },
+        ],
+      }),
+    )
+    const rumble = report.chapters[1]?.findings.find((item) => item.id === 'rumble')
+    expect(rumble?.tip).toMatch(/25 to 30 Hz/)
+    expect(rumble?.tip).toMatch(/leave it/i)
+  })
+
+  it('leaves an ordinary stereo club image alone', () => {
+    const report = buildReport(metrics({ correlation: 0.5, width: 0.32 }))
+    expect(report.chapters[2]?.findings.find((item) => item.id === 'image')?.title).toMatch(/stable/i)
   })
 
   it('says a one-channel file is mono', () => {

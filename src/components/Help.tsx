@@ -3,22 +3,23 @@ import { useEffect, useId, useRef, useState } from 'react'
 const always = [
   [
     'Loudness, 5.',
-    'Loudness is in a finished-master range, the peaks are gone, hotter than a finished-master range, quieter than a finished-master range, or this master is quite quiet.',
+    'With a lot of club records, very loud and barely moving, hot with the peaks still moving, with quieter records, or quiet even for ambient.',
   ],
-  ['Movement, 3.', 'Flattened, still open, or moderate.'],
-  ['Ceiling, 4.', 'Samples clipping, true peak above full scale, true peak close, or headroom.'],
-  ['Image, 5.', 'Mono, left and right fighting, very wide, nearly mono, or stable.'],
+  ['Movement, 3.', 'The level barely moves, still open, or moderate.'],
+  ['Ceiling, 4.', 'Samples clipped, true peak above full scale, inside the last decibel, or headroom.'],
+  ['Image, 5.', 'Mono, left and right fighting, a lot of the mix in the sides, nearly mono, or stable.'],
   ['Low end, 3.', 'Bass too wide, a bit wide, or centered.'],
 ] as const
 
 const sometimes = [
-  'Six irregularities: clicks, a digital glitch, dropouts, a noise burst, silence at the start, silence at the end.',
+  'Six irregularities: clicks, a waveform jump, dropouts, a noise burst, silence at the start, silence at the end.',
   'Loud passages marked on the timeline.',
+  'The loud stretch sitting above the quiet stretch.',
   'Phase dips.',
   'The image leaning left or right.',
   'Loud parts stacked in the center.',
   'Upper mids rough as well as loud.',
-  'A narrow resonance. The same note, up to twice.',
+  'Energy under 30 Hz as loud as the sub you can hear.',
   'Twelve band notes: each of the six bands, too much or too little. If none of them stand out, one note says the tilt is balanced.',
   'A silent file, which replaces the rest.',
 ]
@@ -76,8 +77,8 @@ export function Help() {
               top step through a few things that stand out. The chapters underneath keep the full notes.
             </p>
             <p>
-              The report can write 46 distinct cases. A track never gets all of them. It gets the one case that matches in
-              each group, plus any irregularities that are actually present.
+              The report can write 47 distinct cases. A track never gets all of them. It gets the one case that matches in
+              each group, plus whichever of the other notes are actually present.
             </p>
             <h3>Always one of these</h3>
             <ul>
@@ -99,7 +100,7 @@ export function Help() {
             </p>
             <p>
               The top of the report shows at most six of these, and it skips the ones that only say things are fine. A
-              confident key or tempo can appear there too.
+              confident tempo can appear there too. A key, when one is confident, stays in the figures.
             </p>
           </div>
         </section>

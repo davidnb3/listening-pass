@@ -56,16 +56,16 @@ describe('standouts', () => {
         metrics({
           clippedSamples: 12,
           truePeakDbtp: 0.8,
-          integratedLufs: -14,
+          integratedLufs: -20,
           bands: metrics().bands.map((band) => (band.id === 'lowMid' ? { ...band, deviationDb: 7.5 } : band)),
           faults: [{ kind: 'click', time: 4, seconds: 0 }],
         }),
       ),
     )
     expect(items.map((item) => item.kind)).toEqual(['irregularity', 'critique', 'recommendation', 'irregularity'])
-    expect(items.some((item) => /clipping/i.test(item.title))).toBe(true)
+    expect(items.some((item) => /clipped/i.test(item.title))).toBe(true)
     expect(items.some((item) => /low mids/i.test(item.title))).toBe(true)
-    expect(items.some((item) => item.kind === 'recommendation' && /leave the level alone/i.test(item.detail))).toBe(true)
+    expect(items.some((item) => item.kind === 'recommendation' && /leave it/i.test(item.detail))).toBe(true)
     expect(items.some((item) => /distort on playback/i.test(`${item.title} ${item.detail}`))).toBe(false)
   })
 
@@ -78,7 +78,8 @@ describe('standouts', () => {
         }),
       ),
     )
-    expect(items.find((item) => item.id === 'key')?.title).toMatch(/D minor/)
+    expect(items.find((item) => item.id === 'key')).toBeUndefined()
+    expect(items.some((item) => /trust as a key/i.test(`${item.title} ${item.detail}`))).toBe(false)
     expect(items.find((item) => item.id === 'tempo')?.detail).toMatch(/192/)
   })
 })
